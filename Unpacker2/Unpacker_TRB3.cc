@@ -67,14 +67,14 @@ void Unpacker_TRB3::ProcessEvent(UInt_t* data, Event* evt) {
       
       UnpackingModule* u = GetUnpacker(UIntToString(tdcNumber));
       if (u != NULL) {
-	if(debugMode == true)
-		cerr<<"Unpacker_TRB3.cc: Calling Lattice_TDC for module "<<UIntToString(tdcNumber)<<" passing "<<internalSize<<" bytes"<<endl;
+//	if(debugMode == true)
+//		cerr<<"Unpacker_TRB3.cc: Calling Lattice_TDC for module "<<UIntToString(tdcNumber)<<" passing "<<internalSize<<" bytes"<<endl;
 	GetUnpacker(UIntToString(tdcNumber))->SetEntireEventSize(internalSize + 1);
 	GetUnpacker(UIntToString(tdcNumber))->ProcessEvent(data);
       }
       else {
-	if(debugMode == true)
-		cerr<<"Unpacker_TRB3.cc: No Unpacker found for module "<<UIntToString(tdcNumber)<<" skipping "<<internalSize<<" bytes"<<endl;
+//	if(debugMode == true)
+//		cerr<<"Unpacker_TRB3.cc: No Unpacker found for module "<<UIntToString(tdcNumber)<<" skipping "<<internalSize<<" bytes"<<endl;
       }
       
       data += internalSize + 1;
@@ -83,7 +83,7 @@ void Unpacker_TRB3::ProcessEvent(UInt_t* data, Event* evt) {
   //}
 }
 
-void Unpacker_TRB3::GetADCHits() { }
+//void Unpacker_TRB3::GetADCHits() { }
 
 void Unpacker_TRB3::GetTDCHits() {
   map<std::string, UnpackingModule*>::iterator iter;  
@@ -102,10 +102,9 @@ void Unpacker_TRB3::GetTDCHits() {
 					if(iter->second->GetLeadMult(i) > 0) {
 					
 						if(iter->second->GetChannelOffset() + i == referenceChannel) {
-			//	      event->SetTDCReferenceTime(iter->second->GetLeadTime(i, 0));    
 							
-							if(debugMode == true)
-								cerr<<"Unpacker_TRB3.cc: Adding referenceTime"<<endl;
+//							if(debugMode == true)
+//								cerr<<"Unpacker_TRB3.cc: Adding referenceTime"<<endl;
 						}
 					
 						for(UInt_t j = 0; j < iter->second->GetLeadMult(i); j++){

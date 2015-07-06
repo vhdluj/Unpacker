@@ -10,12 +10,12 @@
 #include "ADCHit.h"
 #include "TDCHit.h"
 #include "UnpackingModule.h"
-#include "Unpacker_HPTDC_VHR.h"
-#include "Unpacker_HPTDC_HR.h"
-#include "Unpacker_HUB2.h"
-#include "Unpacker_TRB2.h"
-#include "Unpacker_Shower.h"
-#include "Unpacker_Ecal_ADC.h"
+//#include "Unpacker_HPTDC_VHR.h"
+//#include "Unpacker_HPTDC_HR.h"
+//#include "Unpacker_HUB2.h"
+//#include "Unpacker_TRB2.h"
+//#include "Unpacker_Shower.h"
+//#include "Unpacker_Ecal_ADC.h"
 #include "Unpacker_TRB3.h"
 #include "Unpacker_Lattice_TDC.h"
 
@@ -114,7 +114,7 @@ void Unpacker2::ParseConfigFile(string f, string s) {
     correctionFile = string(element->FirstChildElement("CORRECTION_FILE")->GetText());
     
     // create appropriate unpacking module
-    if (type == "TRB2_S") { // standalone type
+/*    if (type == "TRB2_S") { // standalone type
 	fullSetup = false;
       
 	m = new Unpacker_TRB2(type, address, hubAddress, 0, 0, 0, "", invertBytes, debugMode);
@@ -234,8 +234,9 @@ void Unpacker2::ParseConfigFile(string f, string s) {
 	      
 	internalNode = internalNode->ToElement()->NextSibling();
       }
-    }
-    else if (type == "TRB3_S") {
+    }*/
+    //else if (type == "TRB3_S") {
+    if (type == "TRB3_S") {
       fullSetup = false;
       //fullSetup = true;
 
@@ -307,21 +308,23 @@ void Unpacker2::DistributeEvents(string f) {
     cerr<<"Starting event loop"<<endl;
     
     event = new Event();
+
+    size_t eventSize = 0;
     
     // iterate through all the events in the file
     while(true) {
       
-      if(debugMode == true)
-	cerr<<"Unpacker2.cc: Position in file at "<<file->tellg()<<endl;
+//      if(debugMode == true)
+//	cerr<<"Unpacker2.cc: Position in file at "<<file->tellg()<<endl;
     
       // read out the header of the event into hdr structure
       pHdr = (UInt_t*) &hdr;
       file->read((char *) (pHdr), getHdrSize());
       
-      size_t eventSize = (size_t) getFullSize();
+      eventSize = (size_t) getFullSize();
             
-      if(debugMode == true)
-	cerr<<"Unpacker2.cc: Starting new event analysis, going over subevents"<<endl;
+//      if(debugMode == true)
+//	cerr<<"Unpacker2.cc: Starting new event analysis, going over subevents"<<endl;
       
       while(true) {
 	subPHdr = (UInt_t*) &subHdr;
@@ -331,24 +334,24 @@ void Unpacker2::DistributeEvents(string f) {
 	UInt_t* pData = new UInt_t[getDataSize()];
 	file->read((char*) (pData), getDataSize());
 	
-	if(debugMode == true) {
-	  cerr<<"Unpacker2.cc: Subevent data size: "<<getDataSize()<<" starting with ";
-	  printf("%08X\n", (*pData));
-	  cerr<<"Unpacker2.cc: Subevent details: "<<((SubEventHdr*)subPHdr)->decoding<<" "<<((SubEventHdr*)subPHdr)->hubAddress<<" "<<((SubEventHdr*)subPHdr)->trgNr<<endl;
-	}
+//	if(debugMode == true) {
+//	  cerr<<"Unpacker2.cc: Subevent data size: "<<getDataSize()<<" starting with ";
+//	  printf("%08X\n", (*pData));
+//	  cerr<<"Unpacker2.cc: Subevent details: "<<((SubEventHdr*)subPHdr)->decoding<<" "<<((SubEventHdr*)subPHdr)->hubAddress<<" "<<((SubEventHdr*)subPHdr)->trgNr<<endl;
+//	}
 	
 	// call the unpacking module
 	UnpackingModule* u = GetUnpacker(getHubAddress());
 	if (u != NULL && (*pData) != 0) {
-	  if(debugMode == true)
-	    cerr<<"Unpacker2.cc: Processing event "<<analyzedEvents<<" on "<<getHubAddress()<<endl;
+//	  if(debugMode == true)
+//	    cerr<<"Unpacker2.cc: Processing event "<<analyzedEvents<<" on "<<getHubAddress()<<endl;
 	  GetUnpacker(getHubAddress())->SetEntireEventSize(getDataSize());
 	  GetUnpacker(getHubAddress())->ProcessEvent(pData, event);
 	  
 	  // gather decoded hits and fill them into event
 	
 	  GetUnpacker(getHubAddress())->GetTDCHits();
-	  GetUnpacker(getHubAddress())->GetADCHits();
+//	  GetUnpacker(getHubAddress())->GetADCHits();
 	
 	}
 	else if((*pData) == 0) {
@@ -359,8 +362,8 @@ void Unpacker2::DistributeEvents(string f) {
 	  exit(1);
 	}
 
-	if(debugMode == true)
-	  cerr<<"Unpacker2.cc: Ignoring "<<(getPaddedSize() - getDataSize())<<" bytes and reducing eventSize by "<<getDataSize(); 
+//	if(debugMode == true)
+//	  cerr<<"Unpacker2.cc: Ignoring "<<(getPaddedSize() - getDataSize())<<" bytes and reducing eventSize by "<<getDataSize(); 
 	
 	delete pData;
 	
@@ -369,14 +372,14 @@ void Unpacker2::DistributeEvents(string f) {
 	
 	eventSize -= getDataSize();
 	
-	if(debugMode == true)
-	  cerr<<" leaving eventSize of "<<eventSize<<endl;
+//	if(debugMode == true)
+//	  cerr<<" leaving eventSize of "<<eventSize<<endl;
 	
-	if(eventSize == 48 && fullSetup == false) { break; }
+	if(eventSize <= 48 && fullSetup == false) { break; }
 	
 	eventSize -= getPaddedSize() - getDataSize();
 	
-	if((eventSize == 64) && fullSetup == true) { break; }
+	if((eventSize <= 64) && fullSetup == true) { break; }
       }
       
       newTree->Fill();
@@ -399,7 +402,7 @@ void Unpacker2::DistributeEvents(string f) {
 //      }
       
       // check the end of loop conditions (end of file)
-      if(fileSize - file->tellg() < 200) { break; }
+      if((fileSize - ((int)file->tellg())) < 500) { break; }
       if((file->eof() == true) || ((int)file->tellg() == fileSize)) { break; }
       if(analyzedEvents == eventsToAnalyze) { break; }
     }

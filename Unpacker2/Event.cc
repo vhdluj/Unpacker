@@ -7,13 +7,14 @@ ClassImp(Event);
 
 Event::Event() {   
   TDCHits = new TClonesArray("TDCHitExtended", 1000);
-  ADCHits = new TClonesArray("ADCHit", 1000);
+//TDCHits = new TClonesArray("TDCHit", 1000);
+//  ADCHits = new TClonesArray("ADCHit", 1000);
   
   TDCHits->Delete();
-  ADCHits->Delete();
+//  ADCHits->Delete();
   
   totalNTDCHits = 0;
-  totalNADCHits = 0;
+//  totalNADCHits = 0;
   
   TDCReferenceTime = 0;
   
@@ -36,20 +37,20 @@ TDCHitExtended* Event::AddTDCHitExtended(int channel) {
   return hit;
 }
 
-ADCHit* Event::AddADCHit(int channel) {
+/*ADCHit* Event::AddADCHit(int channel) {
   //cerr<<"Event: adding ADC hit"<<endl;
   TClonesArray& ahits = *ADCHits;
   ADCHit* hit = new (ahits[totalNADCHits++]) ADCHit();
   hit->SetChannel(channel);
   return hit;
-}
+}*/
 
 void Event::Clear(void) {  
   TDCHits->Delete();
-  ADCHits->Delete();
+//  ADCHits->Delete();
   
   totalNTDCHits = 0;
-  totalNADCHits = 0;  
+//  totalNADCHits = 0;  
   
   TDCReferenceTime = 0;
 }

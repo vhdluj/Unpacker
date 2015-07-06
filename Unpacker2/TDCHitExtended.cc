@@ -9,42 +9,25 @@ TDCHitExtended::TDCHitExtended() {
   channel = -1;
 
   leadsNum = 0;
-	leadFineTime1 = -100000;
-	leadCoarseTime1 = -100000;
-  leadEpoch1 = -100000;
-  leadTime1 = -100000;
-  absoluteLead1 = -100000;
-
   trailsNum = 0;
-	trailFineTime1 = -100000;
-	trailCoarseTime1 = -100000;
-  trailEpoch1 = -100000;
-  trailTime1 = -100000;
-  absoluteTrail1 = -100000;	
 
-  tot = -100000;
-
-	timeLineSize = 0;
+  timeLineSize = 0;
     
   for (int i = 0; i < MAX_HITS * 2; i++) {
-		leadFineTimes[i] = -100000;
-		leadCoarseTimes[i] = -100000;
+    leadFineTimes[i] = -100000;
+    leadCoarseTimes[i] = -100000;
     leadEpochs[i] = -100000;
-    leadTimes[i] = -100000;
-    absoluteLeads[i] = -100000;
 
-		trailFineTimes[i] = -100000;
-		trailCoarseTimes[i] = -100000;
+    trailFineTimes[i] = -100000;
+    trailCoarseTimes[i] = -100000;
     trailEpochs[i] = -100000;
-    trailTimes[i] = -100000;
-    absoluteTrails[i] = -100000;
 
-		fineTimeLine[i] = -100000;
-		coarseTimeLine[i] = -100000;
-		epochTimeLine[i] = -100000;
-		shortTimeLine[i] = -100000;
-		absoluteTimeLine[i] = -100000;
-		riseTimeLine[i] = -100000;
+    fineTimeLine[i] = -100000;
+    coarseTimeLine[i] = -100000;
+    epochTimeLine[i] = -100000;
+    shortTimeLine[i] = -100000;
+    absoluteTimeLine[i] = -100000;
+    riseTimeLine[i] = -100000;
   }
 }
 

@@ -15,7 +15,8 @@
 
 // Header file for the classes stored in the TTree if any.
 #include "../Unpacker2/Event.h"
-#include "/home/guplab/root/include/TObject.h"
+#include "/home/daq/root_v5.34.25/include/TObject.h"
+#include "/home/daq/root_v5.34.25/include/TCanvas.h"
 #include "../Unpacker2/TDCHit.h"
 #include "../Unpacker2/TDCHitExtended.h"
 #include "../Unpacker2/ADCHit.h"

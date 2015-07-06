@@ -11,30 +11,14 @@ protected:
   Int_t channel;
 
   Int_t leadsNum;
-  int leadFineTime1;
   int leadFineTimes[MAX_HITS];
-  int leadCoarseTime1;
   int leadCoarseTimes[MAX_HITS];
-  int leadEpoch1;
   int leadEpochs[MAX_HITS];
-  double leadTime1;
-  double leadTimes[MAX_HITS];
-  double absoluteLead1;
-  double absoluteLeads[MAX_HITS];
 
   Int_t trailsNum;
-  int trailFineTime1;
-	int trailFineTimes[MAX_HITS];
-	int trailCoarseTime1;
-	int trailCoarseTimes[MAX_HITS];
-  int trailEpoch1;
+  int trailFineTimes[MAX_HITS];
+  int trailCoarseTimes[MAX_HITS];
   int trailEpochs[MAX_HITS];
-  double trailTime1;
-  double trailTimes[MAX_HITS];
-  double absoluteTrail1;
-  double absoluteTrails[MAX_HITS];
-
-  double tot;
   
 public:
 

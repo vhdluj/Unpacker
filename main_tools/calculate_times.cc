@@ -1,7 +1,7 @@
-#include "../Unpacker2/Event.h"
-#include "../Unpacker2/TDCHit.h"
-#include "../Unpacker2/TDCHitExtended.h"
-#include "../Unpacker2/Unpacker2.h"
+#include "../Unpacker/Unpacker2/Event.h"
+#include "../Unpacker/Unpacker2/TDCHit.h"
+#include "../Unpacker/Unpacker2/TDCHitExtended.h"
+#include "../Unpacker/Unpacker2/Unpacker2.h"
 #include <TH1F.h>
 #include <TF1.h>
 #include <TMath.h>
@@ -9,11 +9,43 @@
 #include <TTree.h>
 #include <TChain.h>
 #include <TCanvas.h>
+#include <TIterator.h>
+#include <TCollection.h>
+#include <unistd.h>
 
 #define REF_CHANNELS_NUMBER 4
 
-int calculate_times(int eventsNum, const char* fileName, int refChannelOffset)
+using namespace std;
+
+int calculate_times(int eventsNum, const char* fileName, int refChannelOffset, const char* calibFile)
 {
+
+	TH1F* calibHist;
+	TH1F* tmp;
+
+	
+	// load zero offsets in case no file is specified
+	string calibFileName = string(calibFile);
+	if (calibFileName.find(".root") == string::npos) {
+		calibHist = new TH1F("stretcher_offsets", "stretcher_offsets", REF_CHANNELS_NUMBER * refChannelOffset, 0, REF_CHANNELS_NUMBER * refChannelOffset);
+		for (int i = 0; i < REF_CHANNELS_NUMBER * refChannelOffset; i++) {
+			calibHist->SetBinContent(i, 0);
+		}
+	}
+	// load the stretcher offsets calibration
+	else {
+		TFile* file = new TFile();
+		ifstream my_file(calibFileName.c_str());
+		file = new TFile(calibFileName.c_str(), "READ");
+		TDirectory* dir = gDirectory->GetDirectory("Rint:/");
+		tmp = (TH1F*)file->Get("stretcher_offsets");
+		calibHist = (TH1F*)(tmp->Clone("stretcher_offsets"));
+		calibHist->SetDirectory(dir);
+
+		file->Close();
+	}
+
+
 
  //int localTrailIndex = 0;
  double lastTime = -1;
@@ -27,7 +59,8 @@ int calculate_times(int eventsNum, const char* fileName, int refChannelOffset)
  TClonesArray* pArray = 0;
  chain.SetBranchAddress("event", &pEvent);
 
- string newFileName(fileName);
+ string newFileName = string(fileName);
+cerr<<"TIMES:"<<newFileName<<endl;
  newFileName = newFileName.substr(0, newFileName.size() - 5);
  newFileName += "_times.root";
 
@@ -46,6 +79,8 @@ int calculate_times(int eventsNum, const char* fileName, int refChannelOffset)
  int refTimeCoarse[REF_CHANNELS_NUMBER];
  int refTimeFine[REF_CHANNELS_NUMBER];
 
+TIter iter;
+
  for(Int_t i = 0; i < entries; i++)
 	{
     if (i % 10000 == 0) cerr<<i<<" of "<<entries<<"\r";
@@ -53,7 +88,7 @@ int calculate_times(int eventsNum, const char* fileName, int refChannelOffset)
     chain.GetEntry(i);
     pArray = pEvent->GetTDCHitsArray();
     if (pArray == 0) continue;
-    TIter iter(pArray);
+    iter = TIter(pArray);
 
 		for(int l = 0; l < REF_CHANNELS_NUMBER; l++) {
 			refTimeEpoch[l] = -222222;
@@ -61,7 +96,6 @@ int calculate_times(int eventsNum, const char* fileName, int refChannelOffset)
 			refTimeFine[l] = -222222;			
 		}
 
-	
 		// fetch the reference times
 		while( pHit = (TDCHit*) iter.Next()) {
 			if (pHit->GetChannel() % refChannelOffset == 0)
@@ -85,7 +119,6 @@ int calculate_times(int eventsNum, const char* fileName, int refChannelOffset)
 					new_hit->SetTimeLineSize(2);
 				}
 		}
-
 		// create time lines for normal channels
 		iter = iter.Begin();
     while( pHit = (TDCHit*) iter.Next() )
@@ -108,11 +141,6 @@ int calculate_times(int eventsNum, const char* fileName, int refChannelOffset)
 						)
 					);
 					leadTime += ((((pHit->GetLeadCoarse(j) - refTimeCoarse[tdc_number]) * 5000.) - (pHit->GetLeadFine(j) - refTimeFine[tdc_number])) / 1000.);
-
-					//if (pHit->GetChannel() == 100)
-						//	printf("%f, %d, %d, %d \n", leadTime, pHit->GetLeadEpoch(j), pHit->GetLeadCoarse(j), pHit->GetLeadFine(j));
-						//printf("%f, %d, %d, %d \n", leadTime, tdc_number, refTimeEpoch[tdc_number], refTimeCoarse[tdc_number], refTimeFine[tdc_number]);
-
 					if (localIndex > 0) {
 						for(int l = 0; l <= localIndex; l++)
 						{
@@ -141,6 +169,9 @@ int calculate_times(int eventsNum, const char* fileName, int refChannelOffset)
 							( (((unsigned)refTimeEpoch[tdc_number]) << 11) * 5.0 )
 						)
 					);
+
+					trailTime -= calibHist->GetBinContent(pHit->GetChannel());
+
 					trailTime += ( (((pHit->GetTrailCoarse(k) - refTimeCoarse[tdc_number]) * 5000.) - (pHit->GetTrailFine(k) - refTimeFine[tdc_number])) / 1000.);
 
 					if (localIndex > 0) {
@@ -166,7 +197,6 @@ int calculate_times(int eventsNum, const char* fileName, int refChannelOffset)
 				new_hit->SetTimeLineSize(localIndex);
 			}
 		}
-
 		new_tree->Fill();
 		new_event->Clear();
 	}

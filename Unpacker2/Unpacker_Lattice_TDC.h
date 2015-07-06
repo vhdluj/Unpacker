@@ -42,12 +42,12 @@ public:
   void SayHi() { cerr<<"Lattice_TDC: Hi from Lattice_TDC"<<endl; }
   
   int GetLeadMult(int channel) { return leadMult[channel]; }
-	int GetLeadFineTime(int channel, int mult) { return leadFineTimes[channel][mult]; }
-	int GetLeadCoarseTime(int channel, int mult) { return leadCoarseTimes[channel][mult]; }
-	int GetLeadEpoch(int channel, int mult) { return leadEpochs[channel][mult]; }
+  int GetLeadFineTime(int channel, int mult) { return leadFineTimes[channel][mult]; }
+  int GetLeadCoarseTime(int channel, int mult) { return leadCoarseTimes[channel][mult]; }
+  int GetLeadEpoch(int channel, int mult) { return leadEpochs[channel][mult]; }
 
   int GetTrailMult(int channel) { return trailMult[channel]; }
-	int GetTrailFineTime(int channel, int mult) { return trailFineTimes[channel][mult]; }
+  int GetTrailFineTime(int channel, int mult) { return trailFineTimes[channel][mult]; }
   int GetTrailCoarseTime(int channel, int mult) { return trailCoarseTimes[channel][mult]; }
   int GetTrailEpoch(int channel, int mult) { return trailEpochs[channel][mult]; }
 

@@ -35,15 +35,10 @@ extern void G__set_cpp_environmentmydict();
 #include "Event.h"
 #include "UnpackingModule.h"
 #include "TDCHit.h"
-#include "ADCHit.h"
-#include "Unpacker_HUB2.h"
-#include "Unpacker_Shower.h"
-#include "Unpacker_Ecal_ADC.h"
 #include "Unpacker_TRB3.h"
 #include "Unpacker_Lattice_TDC.h"
 #include "TDCHitExtended.h"
 #include "EventIII.h"
-#include "TDCHitIII.h"
 #include "TDCChannel.h"
 #include <algorithm>
 namespace std { }
@@ -65,7 +60,6 @@ extern G__linked_taginfo G__mydictLN_reverse_iteratorlEvectorlETVirtualArraymUcO
 extern G__linked_taginfo G__mydictLN_iteratorlEbidirectional_iterator_tagcOTObjectmUcOlongcOconstsPTObjectmUmUcOconstsPTObjectmUaNgR;
 extern G__linked_taginfo G__mydictLN_maplEstringcOTObjArraymUcOlesslEstringgRcOallocatorlEpairlEconstsPstringcOTObjArraymUgRsPgRsPgR;
 extern G__linked_taginfo G__mydictLN_TDCHit;
-extern G__linked_taginfo G__mydictLN_ADCHit;
 extern G__linked_taginfo G__mydictLN_TDCHitExtended;
 extern G__linked_taginfo G__mydictLN_Event;
 extern G__linked_taginfo G__mydictLN_UnpackingModule;
@@ -74,9 +68,6 @@ extern G__linked_taginfo G__mydictLN_maplEstringcOUnpackingModulemUcOlesslEstrin
 extern G__linked_taginfo G__mydictLN_Unpacker2;
 extern G__linked_taginfo G__mydictLN_Unpacker2cLcLEventHdr;
 extern G__linked_taginfo G__mydictLN_Unpacker2cLcLSubEventHdr;
-extern G__linked_taginfo G__mydictLN_Unpacker_HUB2;
-extern G__linked_taginfo G__mydictLN_Unpacker_Shower;
-extern G__linked_taginfo G__mydictLN_Unpacker_Ecal_ADC;
 extern G__linked_taginfo G__mydictLN_Unpacker_TRB3;
 extern G__linked_taginfo G__mydictLN_TVectorTlEfloatgR;
 extern G__linked_taginfo G__mydictLN_TVectorTlEdoublegR;
@@ -84,6 +75,5 @@ extern G__linked_taginfo G__mydictLN_TH1F;
 extern G__linked_taginfo G__mydictLN_Unpacker_Lattice_TDC;
 extern G__linked_taginfo G__mydictLN_TDCChannel;
 extern G__linked_taginfo G__mydictLN_EventIII;
-extern G__linked_taginfo G__mydictLN_TDCHitIII;
 
 /* STUB derived class for protected member access */

@@ -1,9 +1,6 @@
 #include "../Unpacker2/EventIII.h"
 #include "../Unpacker2/TDCHitIII.h"
 #include "../Unpacker2/Event.h"
-#include "./calculate_times.cc"
-#include "./calculate_hits.cc"
-#include "./pgenerate_diag_histo_panda.cc"
 #include "../Unpacker2/Unpacker2.h"
 #include <TH1F.h>
 #include <TF1.h>
@@ -15,16 +12,21 @@
 #include <TFile.h>
 #include <time.h>
 
-int run_analysis(int eventsNum, char* fileName, char* confFile, int referenceChannel)
+
+int calculate_hits(int eventsNum, const char* fileName, int referenceChannel);
+int calculate_times(int eventsNum, const char* fileName, int refChannelOffset, const char* calibFile);
+
+int run_analysis(int eventsNum, char* fileName, char* confFile, int referenceChannel, const char* calibFile)
 {
     clock_t tStart = clock();
   
-	string newFileName(fileName);
+	string newFileName = "bleble";
+	newFileName = string(fileName);
 	newFileName += ".root";
 
-	Unpacker2(fileName, confFile, eventsNum);
+	//Unpacker2(fileName, confFile, eventsNum);
 
-	calculate_times(eventsNum, newFileName.c_str(), 49);
+	calculate_times(eventsNum, newFileName.c_str(), 49, calibFile);
 
 	newFileName = newFileName.substr(0, newFileName.size() - 5);
 	newFileName += "_times.root";
@@ -33,8 +35,8 @@ int run_analysis(int eventsNum, char* fileName, char* confFile, int referenceCha
 
 	newFileName = newFileName.substr(0, newFileName.size() - 5);
 	newFileName += "_hits.root";
-	pgenerate_diag_histo_panda(eventsNum,newFileName.c_str() ,referenceChannel);
+	//pgenerate_diag_histo_panda(eventsNum,newFileName.c_str() ,referenceChannel);
 
-    	printf("Time taken: %.2fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
+    	//printf("Time taken: %.2fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
     return 0;
 }

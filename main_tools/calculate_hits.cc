@@ -1,9 +1,9 @@
-#include "../Unpacker2/EventIII.h"
-#include "../Unpacker2/TDCHitIII.h"
-#include "../Unpacker2/Event.h"
-#include "../Unpacker2/TDCHit.h"
-#include "../Unpacker2/TDCHitExtended.h"
-#include "../Unpacker2/TDCChannel.h"
+#include "../Unpacker/Unpacker2/EventIII.h"
+#include "../Unpacker/Unpacker2/TDCHitIII.h"
+#include "../Unpacker/Unpacker2/Event.h"
+#include "../Unpacker/Unpacker2/TDCHit.h"
+#include "../Unpacker/Unpacker2/TDCHitExtended.h"
+#include "../Unpacker/Unpacker2/TDCChannel.h"
 #include <TH1F.h>
 #include <TF1.h>
 #include <TMath.h>
@@ -12,9 +12,13 @@
 #include <TChain.h>
 #include <TCanvas.h>
 #include <TFile.h>
+#include <string.h>
+#include <TIterator.h>
+#include <TCollection.h>
 
 
-#define CHANNELS_NUMBER 32
+using namespace std;
+
 
 int calculate_hits(int eventsNum, const char* fileName, int referenceChannel)
 {
@@ -26,7 +30,10 @@ int calculate_hits(int eventsNum, const char* fileName, int referenceChannel)
   TClonesArray* pArray = 0;
   chain.SetBranchAddress("event", &pEvent);
 
-	string newFileName(fileName);
+
+	string newFileName = "bleble";
+	newFileName = string(fileName);
+cerr<<"HITS:"<<newFileName<<endl;
 	newFileName = newFileName.substr(0, newFileName.size() - 5);
 	newFileName += "_hits.root";
 
@@ -44,6 +51,8 @@ int calculate_hits(int eventsNum, const char* fileName, int referenceChannel)
   double actualLead = -100000;
   bool firstLeadFound = false;
 
+    TIter iter;
+
   for(Int_t i = 0; i < entries; i++)
 	{
     if (i % 10000 == 0) cerr<<i<<" of "<<entries<<"\r";
@@ -51,7 +60,7 @@ int calculate_hits(int eventsNum, const char* fileName, int referenceChannel)
     chain.GetEntry(i);
     pArray = pEvent->GetTDCHitsArray();
     if (pArray == 0) continue;
-    TIter iter(pArray);
+	iter = TIter(pArray);
 
    refTime = -100000;
 

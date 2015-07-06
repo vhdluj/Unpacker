@@ -24,14 +24,14 @@ Unpacker_Lattice_TDC::Unpacker_Lattice_TDC(string bT, string bA, string hA, int 
  
   for(int i = 0; i < channelNumber; i++) {
 		leadMult[i] = 0;
-		leadFineTimes[i] = new int[1000]; 
-		leadCoarseTimes[i] = new int[1000];
-		leadEpochs[i] = new int[1000];
+		leadFineTimes[i] = new int[MAX_HITS]; 
+		leadCoarseTimes[i] = new int[MAX_HITS];
+		leadEpochs[i] = new int[MAX_HITS];
 		
 		trailMult[i] = 0;
-		trailFineTimes[i] = new int[1000]; 
-		trailCoarseTimes[i] = new int[1000];
-		trailEpochs[i] = new int[1000];
+		trailFineTimes[i] = new int[MAX_HITS]; 
+		trailCoarseTimes[i] = new int[MAX_HITS];
+		trailEpochs[i] = new int[MAX_HITS];
   }
   
 	actualEpoch = -100000;
@@ -112,14 +112,14 @@ void Unpacker_Lattice_TDC::Clear() {
 		delete [] trailEpochs[i];
     
 		leadMult[i] = 0;
-		leadFineTimes[i] = new int[1000]; 
-		leadCoarseTimes[i] = new int[1000];
-		leadEpochs[i] = new int[1000];
+		leadFineTimes[i] = new int[MAX_HITS]; 
+		leadCoarseTimes[i] = new int[MAX_HITS];
+		leadEpochs[i] = new int[MAX_HITS];
 		
 		trailMult[i] = 0;
-		trailFineTimes[i] = new int[1000]; 
-		trailCoarseTimes[i] = new int[1000];
-		trailEpochs[i] = new int[1000];
+		trailFineTimes[i] = new int[MAX_HITS]; 
+		trailCoarseTimes[i] = new int[MAX_HITS];
+		trailEpochs[i] = new int[MAX_HITS];
   }
 
 	actualEpoch = -100000;
@@ -130,8 +130,8 @@ void Unpacker_Lattice_TDC::ProcessEvent(UInt_t* data) {
   
   size_t dataSize = GetEntireEventSize();
   
-  if(debugMode == true)
-    cerr<<"Lattice_TDC: received "<<dataSize<<" bytes to unpack"<<endl;
+//  if(debugMode == true)
+//    cerr<<"Lattice_TDC: received "<<dataSize<<" bytes to unpack"<<endl;
   
   while(dataSize > 0) {
     
@@ -156,20 +156,20 @@ void Unpacker_Lattice_TDC::ProcessEvent(UInt_t* data) {
     
       switch (header) {
 
-	case 1:
+/*	case 1:
 		errorBits = data_i & 0xffff;
 		if(debugMode == true) {
 	    printf("%08X\n", data_i);
 			cerr<<"Lattice_TDC: TDC Header found"<<endl;
 		}
-		break;
+		break;*/
 	
 	case 3: // epoch ctr
 		epoch = data_i & 0xfffffff;
-		if(debugMode == true) {
-	    printf("%08X\n", data_i);
-			cerr<<"Lattice_TDC: EpochCounter found with value "<<epoch<<" assigned as actualEpoch"<<endl;
-		}
+//		if(debugMode == true) {
+//	    printf("%08X\n", data_i);
+//			cerr<<"Lattice_TDC: EpochCounter found with value "<<epoch<<" assigned as actualEpoch"<<endl;
+//		}
 		actualEpoch = epoch;
 		break;
 		
@@ -189,11 +189,11 @@ void Unpacker_Lattice_TDC::ProcessEvent(UInt_t* data) {
 	  }*/
 
 	  if (((data_i >> 11) & 0x1) == 1) { // rising edge
-	    if(debugMode == true) {
-	      printf("%08X\n", data_i);
-	      cerr<<"Lattice_TDC: LeadTime found on channel "<<channel<<" with fine "<<fine<<" coarse "<<coarse<<endl; 
-				cerr<<"matched with actualEpoch counter with value "<<actualEpoch<<endl;	      
-	    }
+//	    if(debugMode == true) {
+//	      printf("%08X\n", data_i);
+//	      cerr<<"Lattice_TDC: LeadTime found on channel "<<channel<<" with fine "<<fine<<" coarse "<<coarse<<endl; 
+//				cerr<<"matched with actualEpoch counter with value "<<actualEpoch<<endl;	      
+//	    }
 
 			if (fine != 0x3ff) {
 				if (useCorrections == true)
@@ -201,18 +201,17 @@ void Unpacker_Lattice_TDC::ProcessEvent(UInt_t* data) {
 				else		
 					leadFineTimes[channel][leadMult[channel]] = fine * 10.0;
 
-//cerr<<fine<<endl;
 				leadCoarseTimes[channel][leadMult[channel]] = coarse;
 				leadEpochs[channel][leadMult[channel]] = actualEpoch;
 			  leadMult[channel]++;
 			}
 	  }
 	  else { // falling edge	    
-			if(debugMode == true) {
-	      printf("%08X\n", data_i);
-	      cerr<<"Lattice_TDC: TrailTime found on channel "<<channel<<" with fine "<<fine<<" coarse "<<coarse<<endl; 
-				cerr<<"matched with actualEpoch counter with value "<<actualEpoch<<endl;
-	    }
+//			if(debugMode == true) {
+//	      printf("%08X\n", data_i);
+//	      cerr<<"Lattice_TDC: TrailTime found on channel "<<channel<<" with fine "<<fine<<" coarse "<<coarse<<endl; 
+//				cerr<<"matched with actualEpoch counter with value "<<actualEpoch<<endl;
+//	    }
 
 			if (fine != 0x3ff) {
 				if (useCorrections == true)
@@ -226,12 +225,12 @@ void Unpacker_Lattice_TDC::ProcessEvent(UInt_t* data) {
 	  }
 	  break;
 
-	case 2: // debug word
+/*	case 2: // debug word
 		if(debugMode == true) {
 	    printf("%08X\n", data_i);
 			cerr<<"Lattice_TDC: Debug word found"<<endl;
 		}
-		break;
+		break;*/
 	  
 	default:
 	  break;

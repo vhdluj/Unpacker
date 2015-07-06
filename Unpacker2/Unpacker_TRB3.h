@@ -17,7 +17,7 @@ public:
   
   void ProcessEvent(UInt_t* data, Event* evt);
   
-  void GetADCHits();
+//  void GetADCHits();
   void GetTDCHits();
   
   void SetReferenceChannel(int t) { referenceChannel = t; }

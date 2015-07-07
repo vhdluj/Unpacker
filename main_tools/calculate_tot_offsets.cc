@@ -16,16 +16,14 @@
 #include <TBrowser.h>
 #include <iostream>
 
-#define CHANNELS_NUMBER 196
 
+int calculate_tot_offsets(int eventsNum, const char* fileName, const char* outputConfigFile, int channelsCount)
+{
 
-TH1F* tot_hist[CHANNELS_NUMBER];
+TH1F* tot_hist[channelsCount];
 TH2F* tot_barcode;
 TH1F* stretcher_offsets;
 
-
-int calculate_tot_offsets(int eventsNum, const char* fileName, const char* outputConfigFile)
-{
   TChain chain("T");
   chain.Add(fileName);  
 int i;
@@ -47,11 +45,11 @@ int i;
 
 	// ------ create histograms 
 		// tot histograms created with 1us width
-	for (int i = 0; i < CHANNELS_NUMBER; i++) { tot_hist[i] = new TH1F(Form("tot_hist_ch%d", i), Form("tot_hist_ch%d", i), 10000, 0, 1000); }
+	for (int i = 0; i < channelsCount; i++) { tot_hist[i] = new TH1F(Form("tot_hist_ch%d", i), Form("tot_hist_ch%d", i), 10000, 0, 1000); }
 
-	tot_barcode = new TH2F("tot_barcode", "tot_barcode", 10000, 0, 1000, CHANNELS_NUMBER, 0, CHANNELS_NUMBER);
+	tot_barcode = new TH2F("tot_barcode", "tot_barcode", 10000, 0, 1000, channelsCount, 0, channelsCount);
 
-	stretcher_offsets = new TH1F("stretcher_offsets", "stretcher_offsets", CHANNELS_NUMBER, 0, CHANNELS_NUMBER);
+	stretcher_offsets = new TH1F("stretcher_offsets", "stretcher_offsets", channelsCount, 0, channelsCount);
 
 	// ------ loop over events
   for(Int_t i = 0; i < entries; i++)
@@ -75,14 +73,14 @@ int i;
 	}
 
 	// ------ adjust histograms
-	for (int k = 0; k < CHANNELS_NUMBER; k++) {
+	for (int k = 0; k < channelsCount; k++) {
 		// tot histograms centered at mean and +- 5ns offsets
 		tot_hist[k]->GetXaxis()->SetRangeUser(tot_hist[k]->GetMean(1) - 2, tot_hist[k]->GetMean(1) + 2);
 	}
 	tot_barcode->GetXaxis()->SetRangeUser(tot_hist[1]->GetMean(1) - 100, tot_hist[1]->GetMean(1) + 100);
 
 	// ------ calculating offsets and filling final histo
-	for (int k = 0; k < CHANNELS_NUMBER; k++) {
+	for (int k = 0; k < channelsCount; k++) {
 		tot_hist[k]->GetXaxis()->SetRangeUser(-50, 50);
 		if (tot_hist[k]->GetMean(1) > 20) {
 			stretcher_offsets->SetBinContent(k, tot_hist[k]->GetMean(1) - 10);
@@ -94,7 +92,7 @@ int i;
 
 	if (noFile == false) {
 		// ------ saving histograms
-		for (int k = 0; k < CHANNELS_NUMBER; k++) { tot_hist[k]->Write("", TObject::kOverwrite); }
+		for (int k = 0; k < channelsCount; k++) { tot_hist[k]->Write("", TObject::kOverwrite); }
 		tot_barcode->Write("", TObject::kOverwrite);
 		stretcher_offsets->Write("", TObject::kOverwrite);
 	}

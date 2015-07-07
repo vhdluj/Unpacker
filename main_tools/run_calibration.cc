@@ -28,8 +28,8 @@ void generate_temp_raw_calib_file(char* confFile)
 {
 	string line;
 	string name = string(confFile);
-	fstream file(name);
-	ofstream file2(name+"tempraw.xml");
+	fstream file(name.c_str(), ios::in);
+	ofstream file2((name+"tempraw.xml").c_str(), ios::out);
 	if (file.is_open() && file2.is_open() )
 	{
 		while (getline(file, line))
@@ -47,8 +47,8 @@ void generate_temp_full_calib_file(char* confFile, string newFile)
 {
 	string line;
 	string name = string(confFile);
-	fstream file(name);
-	ofstream file2(name + "tempfull.xml");
+	fstream file(name.c_str(), ios::in);
+	ofstream file2((name + "tempfull.xml").c_str(), ios::out);
 	if (file.is_open() && file2.is_open())
 	{
 		while (getline(file, line))

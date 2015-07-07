@@ -62,7 +62,7 @@ Bool_t generate_corrections_TRB3_dataStructureV2::Process(Long64_t entry)
   
   for(int i = 0; i < totalNTDCHits; i++) {
     if (TDCHits_channel[i] != 0 && TDCHits_channel[i] != 49 && TDCHits_channel[i] != 98 && TDCHits_channel[i] != 147) {
-      binsHist[TDCHits_channel[i]]->Fill(TDCHits_leadFineTime1[i]);
+      binsHist[TDCHits_channel[i]]->Fill(TDCHits_leadFineTimes[i][0]);
     }
   }
   

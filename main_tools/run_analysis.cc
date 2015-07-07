@@ -22,10 +22,10 @@ int run_analysis(int eventsNum, char* fileName, char* confFile, int referenceCha
   
 	string newFileName = "bleble";
 	newFileName = string(fileName);
+
+	Unpacker2(fileName, confFile, eventsNum);
+
 	newFileName += ".root";
-
-	//Unpacker2(fileName, confFile, eventsNum);
-
 	calculate_times(eventsNum, newFileName.c_str(), 49, calibFile);
 
 	newFileName = newFileName.substr(0, newFileName.size() - 5);

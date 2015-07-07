@@ -19,9 +19,9 @@
 #define CHANNELS_NUMBER 196
 
 //SET UP BINS FOR HISTOS
-#define DT_BINS 130000
-#define DT_MIN -100
-#define DT_MAX 1200
+#define DT_BINS  100000
+#define DT_MIN  -1200
+#define DT_MAX  1200
 
 
 
@@ -85,6 +85,7 @@ int i;
    double refTime0 = -200000;
    double refTime49 = -200000;
    double refTime98 = -200000;
+   double refTime147 = -200000;
    //extracting reference time
    while( pHit = (TDCChannel*) iter.Next() )
    {
@@ -97,6 +98,8 @@ int i;
 		refTime49 = pHit->GetLeadTime1();
 	if(pHit->GetChannel() == 98 && pHit->GetMult() > 0 )
 		refTime98 = pHit->GetLeadTime1();
+	if(pHit->GetChannel() == 147 && pHit->GetMult() > 0 )
+		refTime147 = pHit->GetLeadTime1();
    }
 
     if (refTime == -200000) //skipping events with no ref time set
@@ -104,13 +107,15 @@ int i;
 	
     if (refTime0 == -200000) //skipping events with no ref time set
 	continue;
-    //if (refTime49 == -200000) //skipping events with no ref time set
-//	continue;
+    if (refTime49 == -200000) //skipping events with no ref time set
+	continue;
 		// ------ loop over channels
 //	std::cerr<<i++<<std::endl;
     if (refTime98 == -200000) //skipping events with no ref time set
         continue;
 
+    if (refTime147 == -200000) //skipping events with no ref time set
+        continue;
 
 		refTimesDiff->Fill(refTime0 - refTime98);
 
@@ -146,12 +151,16 @@ int i;
 
 			if(pHit->GetMult() > 0 ) 
 			{
-			dt_hist[pHit->GetChannel()]-> Fill(pHit->GetLeadTime1()-refTime);
-			//std::cout<<"refTime: "<<refTime<<"  leadTime: "<<pHit->GetLeadTime1()<<std::endl;		
+			for(int j = 0; j < pHit->GetMult(); j++) { dt_hist[pHit->GetChannel()]-> Fill(pHit->GetLeadTime(j)-refTime);}
+			//dt_hist[pHit->GetChannel()]-> Fill(pHit->GetLeadTime1()-refTime);
+			//std::cout<<"refTime: "<<refTime<<"  leadTime: "<<pHit->GetLeadTime1()<<"  dt:"<<pHit->GetLeadTime1()-refTime<<std::endl;		
 	
 			}
 			else
+			{
 			dt_hist[pHit->GetChannel()]-> Fill(-2222222);
+			//std::cout<<"Mult <0 refTime: "<<refTime<<"  leadTime: "<<pHit->GetLeadTime1()<<std::endl;
+			}
 			// fill the multiplicity histograms
 			mult_hist[pHit->GetChannel()]->Fill(pHit->GetMult());
 

@@ -97,7 +97,10 @@ int calculate_dnl_params(int eventsNum, const char* fileName, const char* output
 	for(int i = 0; i < channelsCount; i++)
 	{
 		correctionsHist[i]->Write("", TObject::kOverwrite);
-		correctionsDiag->SetBinContent(i, correctionsHist[i]->GetMean());
+		if (correctionsHist[i]->GetMean() > 0)
+			correctionsDiag->SetBinContent(i + 1, correctionsHist[i]->GetMean());
+		else
+			correctionsDiag->SetBinContent(i + 1, 0);
 	}
 	correctionsDiag->Write("", TObject::kOverwrite);
 

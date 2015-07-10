@@ -10,6 +10,7 @@
 #include <TChain.h>
 #include <TCanvas.h>
 #include <TFile.h>
+#include <TStopwatch.h>
 #include <time.h>
 #include <iostream>
 #include <fstream>
@@ -65,7 +66,8 @@ void generate_temp_full_calib_file(char* confFile, string newFile)
 
 int run_calibration(int eventsNum, char* fileName, char* confFile, int referenceChannel)
 {
-	clock_t tStart = clock();
+	TStopwatch watch = TStopwatch();  
+	watch.Start();
 
 	// alter the config file to remove the calib file
 	generate_temp_raw_calib_file(confFile);
@@ -78,17 +80,17 @@ int run_calibration(int eventsNum, char* fileName, char* confFile, int reference
 	string confTemp = string(confFile);
 	confTemp += "tempraw.xml";
 
-	printf("\n\n >>>>>>>  Unpacking RAW data\n\n");
+	fprintf(stderr, "\n\n >>>>>>>  Unpacking RAW data\n\n");
 	Unpacker2(fileName, confTemp.c_str(), eventsNum);
 
-	printf("\n\n >>>>>>>  Calculating DNL corrections\n\n");
+	fprintf(stderr, "\n\n >>>>>>>  Calculating DNL corrections\n\n");
 	string calibFileName = string(fileName) + "_params.root";
 	newFileName += ".root";
 	calculate_dnl_params(eventsNum, newFileName.c_str(), calibFileName.c_str(), 196);
 
 	
 	// alter the config file to remove the calib file
-	printf("\n\n >>>>>>>  Unpacking data with APPLIED corrections\n\n");
+	fprintf(stderr, "\n\n >>>>>>>  Unpacking data with APPLIED corrections\n\n");
 	generate_temp_full_calib_file(confFile, calibFileName);
 	remove(confTemp.c_str());
 
@@ -99,7 +101,7 @@ int run_calibration(int eventsNum, char* fileName, char* confFile, int reference
 	remove(confTemp.c_str());
 	
 	// calculating times and hits
-	printf("\n\n >>>>>>>  Calculating Times and Hits\n\n");
+	fprintf(stderr, "\n\n >>>>>>>  Calculating Times and Hits\n\n");
 	calculate_times(eventsNum, newFileName.c_str(), 49, "");
 
 	newFileName = newFileName.substr(0, newFileName.size() - 5);
@@ -111,12 +113,12 @@ int run_calibration(int eventsNum, char* fileName, char* confFile, int reference
 	newFileName += "_hits.root";
 
 	// calculating tots offsets
-	printf("\n\n >>>>>>>  Calculating TOT offsets\n\n");
+	fprintf(stderr, "\n\n >>>>>>>  Calculating TOT offsets\n\n");
 	calculate_tot_offsets(eventsNum, newFileName.c_str(), calibFileName.c_str(), 196);
 
 
-  	printf("\n\n >>>>>>>  Calib file: %s\n", calibFileName.c_str());
-  	printf("\n\n >>>>>>>  Time taken: %.2fs\n", (double)(clock() - tStart)/CLOCKS_PER_SEC);
+  	fprintf(stderr, "\n\n >>>>>>>  Calib file: %s\n", calibFileName.c_str());
+	fprintf(stderr, "Time taken %d\n", watch.RealTime());
 
 	return 0;
 }

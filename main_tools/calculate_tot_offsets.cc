@@ -81,12 +81,12 @@ int i;
 
 	// ------ calculating offsets and filling final histo
 	for (int k = 0; k < channelsCount; k++) {
-		tot_hist[k]->GetXaxis()->SetRangeUser(-50, 50);
+		tot_hist[k]->GetXaxis()->SetRangeUser(-50, 55);
 		if (tot_hist[k]->GetMean(1) > 20) {
-			stretcher_offsets->SetBinContent(k, tot_hist[k]->GetMean(1) - 10);
+			stretcher_offsets->SetBinContent(k + 1, tot_hist[k]->GetMean(1) - 10);
 		}
 		else {
-			stretcher_offsets->Fill(k, 0.0);
+			stretcher_offsets->SetBinContent(k + 1, 0.0);
 		}
 	}
 

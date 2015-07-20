@@ -29,7 +29,7 @@ int calculate_times(int eventsNum, const char* fileName, int refChannelOffset, c
 	if (calibFileName.find(".root") == string::npos) {
 		calibHist = new TH1F("stretcher_offsets", "stretcher_offsets", REF_CHANNELS_NUMBER * refChannelOffset, 0, REF_CHANNELS_NUMBER * refChannelOffset);
 		for (int i = 0; i < REF_CHANNELS_NUMBER * refChannelOffset; i++) {
-			calibHist->SetBinContent(i, 0);
+			calibHist->SetBinContent(i + 1, 0);
 		}
 	}
 	// load the stretcher offsets calibration
@@ -170,7 +170,7 @@ TIter iter;
 						)
 					);
 
-					trailTime -= calibHist->GetBinContent(pHit->GetChannel());
+					trailTime -= calibHist->GetBinContent(pHit->GetChannel() + 1);
 
 					trailTime += ( (((pHit->GetTrailCoarse(k) - refTimeCoarse[tdc_number]) * 5000.) - (pHit->GetTrailFine(k) - refTimeFine[tdc_number])) / 1000.);
 

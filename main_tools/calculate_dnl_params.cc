@@ -76,22 +76,22 @@ int calculate_dnl_params(int eventsNum, const char* fileName, const char* output
 		float sum = 0;
     
 		for(int j = 0; j < 32 ; j++)
-			correctionsHist[i]->SetBinContent(j,sum);
+			correctionsHist[i]->SetBinContent(j + 1, sum);
       
 		for(int j = 32; j < 500 ; j++)
 		{
-			sum += binsHist[i]->GetBinContent(j);
+			sum += binsHist[i]->GetBinContent(j + 1);
       
-			correctionsHist[i]->SetBinContent(j,sum);
+			correctionsHist[i]->SetBinContent(j + 1, sum);
 		}
 	}
    
 	//filling linear corrections for reference channels
 	for(int i = 0; i < 500; i++) {
-		correctionsHist[0]->SetBinContent(i, i*10);
-		correctionsHist[49]->SetBinContent(i, i*10);
-		correctionsHist[98]->SetBinContent(i, i*10);
-		correctionsHist[147]->SetBinContent(i, i*10);
+		correctionsHist[0]->SetBinContent(i + 1, i*10);
+		correctionsHist[49]->SetBinContent(i + 1, i*10);
+		correctionsHist[98]->SetBinContent(i + 1, i*10);
+		correctionsHist[147]->SetBinContent(i + 1, i*10);
 	}
 
 	for(int i = 0; i < channelsCount; i++)

@@ -197,7 +197,7 @@ void Unpacker_Lattice_TDC::ProcessEvent(UInt_t* data) {
 
 			if (fine != 0x3ff) {
 				if (useCorrections == true)
-					leadFineTimes[channel][leadMult[channel]] = (corrections[channel]->GetBinContent(fine));
+					leadFineTimes[channel][leadMult[channel]] = (corrections[channel]->GetBinContent(fine + 1));
 				else		
 					leadFineTimes[channel][leadMult[channel]] = fine * 10.0;
 
@@ -215,7 +215,7 @@ void Unpacker_Lattice_TDC::ProcessEvent(UInt_t* data) {
 
 			if (fine != 0x3ff) {
 				if (useCorrections == true)
-					trailFineTimes[channel][trailMult[channel]] = (corrections[channel]->GetBinContent(fine));
+					trailFineTimes[channel][trailMult[channel]] = (corrections[channel]->GetBinContent(fine + 1));
 				else		
 					trailFineTimes[channel][trailMult[channel]] = fine * 10.0;
 				trailCoarseTimes[channel][trailMult[channel]] = coarse;

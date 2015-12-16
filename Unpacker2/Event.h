@@ -3,6 +3,7 @@
 
 #include <fstream>
 #include <TObject.h>
+#include <TNamed.h>
 #include <TClonesArray.h>
 #include "TDCHit.h"
 //#include "ADCHit.h"
@@ -14,7 +15,7 @@ using namespace std;
 class TDCHit;
 //class ADCHit;
 
-class Event : public TObject {
+class Event : public TNamed {
   
 private:
   Int_t totalNTDCHits;

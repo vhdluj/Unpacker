@@ -22,6 +22,7 @@ using namespace std;
 
 int calculate_hits(int eventsNum, const char* fileName, int referenceChannel)
 {
+
   TChain chain("T");
   chain.Add(fileName);
     

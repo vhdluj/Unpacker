@@ -1,7 +1,7 @@
-#include "../Unpacker/Unpacker2/Event.h"
-#include "../Unpacker/Unpacker2/TDCHit.h"
-#include "../Unpacker/Unpacker2/TDCHitExtended.h"
-#include "../Unpacker/Unpacker2/Unpacker2.h"
+#include "../Unpacker2/Event.h"
+#include "../Unpacker2/TDCHit.h"
+#include "../Unpacker2/TDCHitExtended.h"
+#include "../Unpacker2/Unpacker2.h"
 #include <TH1F.h>
 #include <TF1.h>
 #include <TMath.h>
@@ -19,6 +19,9 @@ using namespace std;
 
 int calculate_times(int eventsNum, const char* fileName, int refChannelOffset, const char* calibFile)
 {
+
+
+	cerr<<endl<<"  --  !!WARNING!!: macro changed for compression analysis "<<endl<<endl;
 
 	TH1F* calibHist;
 	TH1F* tmp;
@@ -79,6 +82,10 @@ cerr<<"TIMES:"<<newFileName<<endl;
  int refTimeCoarse[REF_CHANNELS_NUMBER];
  int refTimeFine[REF_CHANNELS_NUMBER];
 
+int corrupted_epochs = 0;
+int all_hits = 0;
+int registered_hits = 0;
+
 TIter iter;
 
  for(Int_t i = 0; i < entries; i++)
@@ -134,13 +141,31 @@ TIter iter;
 
 				for (int j = 0; j < pHit->GetLeadsNum(); j++) 
 				{
-					double leadTime = (double) (
+					/*double leadTime = (double) (
 						(						
 							( (((unsigned)pHit->GetLeadEpoch(j)) << 11) * 5.0) -
 							( (((unsigned)refTimeEpoch[tdc_number]) << 11) * 5.0 )
 						)
 					);
-					leadTime += ((((pHit->GetLeadCoarse(j) - refTimeCoarse[tdc_number]) * 5000.) - (pHit->GetLeadFine(j) - refTimeFine[tdc_number])) / 1000.);
+					leadTime += ((((pHit->GetLeadCoarse(j) - refTimeCoarse[tdc_number]) * 5000.) - (pHit->GetLeadFine(j) - refTimeFine[tdc_number])) / 1000.);*/
+
+					all_hits++;
+
+
+					if (pHit->GetLeadEpoch(j) > refTimeEpoch[0] + 5 || pHit->GetLeadEpoch(j) < refTimeEpoch[0] - 5) {
+						corrupted_epochs++;					
+						continue;
+					}
+
+					registered_hits++;
+
+					double leadTime = (double) (
+						(						
+							( (((unsigned)pHit->GetLeadEpoch(j)) << 11) * 5.0)
+						)
+					);
+					leadTime += ((((pHit->GetLeadCoarse(j)) * 5000.) - (pHit->GetLeadFine(j))) / 1000.);
+
 					if (localIndex > 0) {
 						for(int l = 0; l <= localIndex; l++)
 						{
@@ -163,7 +188,7 @@ TIter iter;
 				}
 				for (int k = 0; k < pHit->GetTrailsNum(); k++)
 				{
-					double trailTime = (double) (
+					/*double trailTime = (double) (
 						(						
 							( (((unsigned)pHit->GetTrailEpoch(k)) << 11) * 5.0) -
 							( (((unsigned)refTimeEpoch[tdc_number]) << 11) * 5.0 )
@@ -172,7 +197,29 @@ TIter iter;
 
 					trailTime -= calibHist->GetBinContent(pHit->GetChannel() + 1);
 
-					trailTime += ( (((pHit->GetTrailCoarse(k) - refTimeCoarse[tdc_number]) * 5000.) - (pHit->GetTrailFine(k) - refTimeFine[tdc_number])) / 1000.);
+					trailTime += ( (((pHit->GetTrailCoarse(k) - refTimeCoarse[tdc_number]) * 5000.) - (pHit->GetTrailFine(k) - refTimeFine[tdc_number])) / 1000.);*/
+
+
+					all_hits++;
+
+					if (pHit->GetTrailEpoch(k) > refTimeEpoch[0] + 5 || pHit->GetTrailEpoch(k) < refTimeEpoch[0] - 5) {
+						corrupted_epochs++;					
+						continue;
+					}
+
+					registered_hits++;
+
+
+					double trailTime = (double) (
+						(						
+							( (((unsigned)pHit->GetTrailEpoch(k)) << 11) * 5.0)
+						)
+					);
+
+					trailTime -= calibHist->GetBinContent(pHit->GetChannel() + 1);
+
+					trailTime += ( (((pHit->GetTrailCoarse(k)) * 5000.) - (pHit->GetTrailFine(k))) / 1000.);
+
 
 					if (localIndex > 0) {
 						for(int l = 0; l <= localIndex; l++)
@@ -204,6 +251,10 @@ TIter iter;
 	new_tree->Write();
 
 	new_file->Close();
+
+	cerr<<endl<<"All hits "<<all_hits<<endl;
+	cerr<<"Registered hits "<<registered_hits<<endl;
+	cerr<<"Corrupted epoch counters "<<corrupted_epochs<<endl<<endl<<endl;
 
 	return 0;
 }

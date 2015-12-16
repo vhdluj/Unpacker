@@ -19,8 +19,8 @@
 #define CHANNELS_NUMBER 196
 
 //SET UP BINS FOR HISTOS
-#define DT_BINS  100000
-#define DT_MIN  -1200
+#define DT_BINS  2900
+#define DT_MIN  -1700
 #define DT_MAX  1200
 
 
@@ -102,7 +102,7 @@ int i;
 		refTime147 = pHit->GetLeadTime1();
    }
 
-    if (refTime == -200000) //skipping events with no ref time set
+    /*if (refTime == -200000) //skipping events with no ref time set
 	continue;
 	
     if (refTime0 == -200000) //skipping events with no ref time set
@@ -115,7 +115,7 @@ int i;
         continue;
 
     if (refTime147 == -200000) //skipping events with no ref time set
-        continue;
+        continue;*/
 
 		refTimesDiff->Fill(refTime0 - refTime98);
 
